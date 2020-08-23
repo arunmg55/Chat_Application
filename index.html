@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div class="login-container" id="login-container">
+      <h1>Login Page</h1>
+      <form onsubmit="loginHandler(event)">
+        <input
+          type="text"
+          placeholder="User name"
+          id="input-field"
+          autocomplete="off"
+        />
+        <button type="submit">Log in</button>
+      </form>
+    </div>
+    <div id="chat-area">
+      <div id="users-area">
+        <h1>Online Users</h1>
+
+        <ul id="users"></ul>
+      </div>
+      <div id="message-area">
+        <div>
+          <ul id="messages"></ul>
+        </div>
+        <div class="message-input-container">
+          <form onsubmit="sendMessage(event)">
+            <input
+              placeholder="Type your message"
+              id="message-input"
+              autocomplete="off"
+            /><button type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var socket = io();
+    var usersContainer = document.getElementById("users");
+    var messageContainer = document.getElementById("messages");
+    var loggedUserName = "";
+    function loginHandler(event) {
+      event.preventDefault();
+      let loggedUser = document.getElementById("input-field").value;
+      loggedUserName = loggedUser;
+      if (loggedUser) {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("chat-area").style.display = "flex";
+        removeAllChildNodes(messageContainer);
+        socket.emit("has connected", loggedUser);
+      } else {
+        alert("Invalid user name");
+      }
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+      let message = document.getElementById("message-input").value;
+      if (message) {
+        socket.emit("new message", { user: loggedUserName, message });
+        document.getElementById("message-input").value = "";
+      } else {
+        alert("You can't send empty messages");
+      }
+    }
+
+    function updateUser(data) {
+      for (let i = 0; i < data.userList.length; i++) {
+        let li = document.createElement("li");
+        li.innerHTML = data.userList[i];
+        usersContainer.appendChild(li);
+      }
+    }
+
+    socket.on("has connected", (data) => {
+      removeAllChildNodes(usersContainer);
+      updateUser(data);
+      let li = document.createElement("li");
+      li.innerHTML = data.userName + " has connected";
+      messageContainer.appendChild(li);
+    });
+
+    socket.on("has disconnected", (data) => {
+      removeAllChildNodes(usersContainer);
+      updateUser(data);
+      let li = document.createElement("li");
+      li.innerHTML = data.userName + " has disconnected";
+      messageContainer.appendChild(li);
+    });
+
+    socket.on("new message", (messageData) => {
+      let li = document.createElement("li");
+      li.innerHTML = messageData.user + ":" + messageData.message;
+      messageContainer.appendChild(li);
+    });
+
+    function removeAllChildNodes(parent) {
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+    }
+  </script>
+</html>

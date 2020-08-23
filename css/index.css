@@ -1,0 +1,74 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.login-container {
+  width: 40%;
+  margin: 10% auto;
+  text-align: center;
+  padding: 10% 0;
+  border-radius: 10px;
+  box-shadow: 2px 4px 19px #acacac;
+}
+
+input {
+  height: 40px;
+  width: 200px;
+  border-radius: 8px;
+  outline: none;
+}
+
+button {
+  height: 40px;
+  width: 80px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+button:hover {
+  background-color: brown;
+  transition: 0.5s;
+}
+#chat-area {
+  display: none;
+  background: wheat;
+  height: 100%;
+}
+#users-area {
+  flex: 0.5;
+  border-right: 1px solid blue;
+}
+
+#message-area {
+  flex: 1;
+  position: relative;
+  overflow: scroll;
+}
+
+#users,
+#messages {
+  list-style-type: none;
+}
+#messages {
+  padding: 0;
+}
+#messages li {
+  padding: 2% !important;
+  background: #607d8b;
+}
+
+#messages li:nth-child(even) {
+  background: #9e9e9e;
+}
+
+.message-input-container {
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+  background: skyblue;
+  padding: 2% 1%;
+}
